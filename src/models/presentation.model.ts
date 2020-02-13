@@ -3,13 +3,13 @@ import {Schema, Document} from 'mongoose';
 
 // Inspired by: https://medium.com/@tomanagle/strongly-typed-models-with-mongoose-and-typescript-7bc2f7197722
 export interface IPresentation extends Document {
-    name: string,
-    content: string
+    name: string;
+    content: [{title: string, body: string, hasNext: boolean, hasPrevious: boolean}];
 }
 
 const PresentationSchema: Schema = new Schema({
         name: {type: String, required: true, unique: true},
-        content: {type: String, required: true}
+        content: [{title: String, body: String, hasNext: Boolean, hasPrevious: Boolean}],
     }
 );
 
