@@ -3,7 +3,7 @@ import http, {Server} from 'http';
 import express, {Express, raw, Request, Response} from 'express';
 import cors from 'cors';
 import mongoose, {Connection} from 'mongoose';
-import {config} from "dotenv";
+import {config as configureDotenv} from "dotenv";
 import presentationsRouter from './routes/Presentations';
 import presentationModel, {IPresentation} from './models/presentation.model';
 import SocketEvents from "./SocketEvents";
@@ -21,11 +21,8 @@ export default class ThesisServer {
 
     private sessions: Session[] = [];
 
-    private attendees = [];
-    private presenters = [];
-
     constructor(port?: number) {
-        config();
+        configureDotenv();
         this.app = express();
         this.port = port ?? parseInt(process.env.PORT, 10);
         this.dbUri = process.env.ATLAS_URI ?? "UNDEFINED_DB_URI";
@@ -50,42 +47,51 @@ export default class ThesisServer {
         this.server.listen(this.port, () => console.log(`SocketIO server is now listening on port ${this.port}`));
         this.socketServer = SocketIO(this.server);
 
-        this.socketServer.on('connection', (socket: Socket) => {
-            console.log('New client connected');
-            socket.on(SocketEvents.Disconnect, () => console.log('Client disconnected'));
-            socket.on(SocketEvents.PresenterConnected, (data: any) => this.presenterConnected(socket, data));
-            socket.on(SocketEvents.AttendeeConnected, (data: any) => this.attendeeConnected(socket, data));
-        });
+        this.socketServer.on('connection', (socket: Socket) => { this.handleClientConnection(socket) });
 
 
 
     }
 
-    private attendeeConnected = (socket: Socket, connectionData: any) => {
-       socket.on(SocketEvents.ValidateSessionId, (json) => {
-           const data = JSON.parse(json);
-           socket.emit(SocketEvents.EmitSessionIdValidated, `{ "sessionId": "${data.sessionId}", "isValid": ${this.validateSessionId(data.sessionId)} }`)
-       });
+    private handleClientConnection(socket: Socket) {
+        socket.on(SocketEvents.Disconnect, () => console.log('Client disconnected'));
+        socket.on(SocketEvents.PresenterConnected, (data: any) => this.handlePresenterConnected(socket, data));
+        socket.on(SocketEvents.AttendeeConnected, (data: any) => this.handleAttendeeConnected(socket, data));
 
-       socket.on(SocketEvents.RegisterAttendee, (json: any) => {
-           const data = JSON.parse(json);
-           const session = this.getSession(data.sessionId);
-           session.addAttendee(socket);
+        console.log('New client connected');
+    }
 
-           socket.on(SocketEvents.Disconnect, () => {
-               session.removeAttendee(socket);
-           });
-       });
+    private handleAttendeeConnected = (socket: Socket, connectionData: any) => {
+       socket.on(SocketEvents.ValidateSessionId, message => this.handleValidateSessionId(socket, message));
+       socket.on(SocketEvents.RegisterAttendee, message => this.handleRegisterAttendee(socket, message));
+       socket.on(SocketEvents.RequestCurrentSlide, message => this.handleRequestCurrentSlide(socket, message));
 
-       socket.on(SocketEvents.RequestCurrentSlide, (json) => {
-           const data = JSON.parse(json);
-           const session = this.getSession(data.sessionId);
-           if(session === undefined) {
-               console.error('Couldn\'t find session ' + data.sessionId);
-               return;
-           }
-           socket.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
-       });
+        console.log('Attendee connected');
+    };
+
+    private handleValidateSessionId = (socket: Socket, message: any) => {
+        const data = JSON.parse(message);
+        socket.emit(SocketEvents.EmitSessionIdValidated, `{ "sessionId": "${data.sessionId}", "isValid": ${this.validateSessionId(data.sessionId)} }`)
+    };
+
+    private handleRegisterAttendee = (socket: Socket, message: any) => {
+        const data = JSON.parse(message);
+        const session = this.getSession(data.sessionId);
+        session.addAttendee(socket);
+
+        socket.on(SocketEvents.Disconnect, () => {
+            session.removeAttendee(socket);
+        });
+    };
+
+    private handleRequestCurrentSlide = (socket: Socket, message: any) => {
+        const data = JSON.parse(message);
+        const session = this.getSession(data.sessionId);
+        if(session === undefined) {
+            console.error('Couldn\'t find session ' + data.sessionId);
+            return;
+        }
+        socket.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
     };
 
     private validateSessionId = (sessionId: string) => {
@@ -101,7 +107,14 @@ export default class ThesisServer {
         return validated;
     };
 
-    private presenterConnected = (socket: Socket, data: any) => {
+    private retrievePresentationFromDB = async () => {
+        await this.dbConnection.useDb('PresentationsDatabase').collection('Presentations')
+            .find<IPresentation>().next();
+    };
+
+    private handlePresenterConnected = (socket: Socket, data: any) => {
+        const res = this.retrievePresentationFromDB();
+        console.log(res);
         this.dbConnection.useDb('PresentationsDatabase')
             .collection('Presentations').find<IPresentation>().next()
             .then(pres => {
@@ -111,27 +124,31 @@ export default class ThesisServer {
                 this.sessions.push(session);
                 console.log(`Session [${session.sessionId}] created`);
                 socket.emit(SocketEvents.EmitNewSessionId, `{"sessionId": "${session.sessionId}"}`);
-
                 socket.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
 
-                socket.on(SocketEvents.RequestNextSlide, (json) => {
-                    session.goToNextSlide();
-                    socket.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
-                    session.attendees.forEach((attendee) => {
-                        attendee.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
-                    });
-                });
+                socket.on(SocketEvents.RequestNextSlide, message => this.handleRequestNextSlide(socket, session, message));
+                socket.on(SocketEvents.RequestPreviousSlide, message => this.handleRequestPreviousSlide(socket, session, message));
 
-                socket.on(SocketEvents.RequestPreviousSlide, (json) => {
-                    session.goToPreviousSlide();
-                    socket.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
-                    session.attendees.forEach((attendee) => {
-                        attendee.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
-                    });
-                });
+                console.log('Presenter connected');
             }).catch(reason => {
                 console.error("Unable to start session. No presentation found! " + reason);
             });
+    };
+
+    private handleRequestPreviousSlide = (socket: Socket, session: Session, message: any) => {
+        session.goToPreviousSlide();
+        socket.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
+        session.attendees.forEach((attendee) => {
+            attendee.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
+        });
+    };
+
+    private handleRequestNextSlide = (socket: Socket, session: Session, message: any) => {
+        session.goToNextSlide();
+        socket.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
+        session.attendees.forEach((attendee) => {
+            attendee.emit(SocketEvents.EmitPresentationContent, this.getPresentationContent(session));
+        });
     };
 
     private getPresentationContent = (session: Session) : string => {
@@ -154,10 +171,6 @@ export default class ThesisServer {
         });
 
         return result;
-    };
-
-    private emitter = async (socket: Socket) => {
-        socket.emit('MESSAGE', "Content...");
     };
 
     public get(path: string, callback: (Request, Result) => void) {
