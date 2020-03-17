@@ -1,5 +1,3 @@
-import has = Reflect.has;
-
 export default class Slide {
     title: string;
     body: string;

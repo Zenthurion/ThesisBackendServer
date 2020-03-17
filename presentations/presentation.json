@@ -1,0 +1,158 @@
+{
+    "name": "First Presentation",
+    "slides": [
+        {
+            "type": "PlainSlide",
+            "content": {
+                "title": "Introduction",
+                "body": "Welcome to the first slide! Here is some pirate ipsum free of charge: \nPlate Fleet Jolly Roger spirits Corsair. Davy Jones' Locker fire in the hole shrouds Barbary Coast."
+            }
+        },
+        {
+            "type": "SlideChoiceSlide",
+            "content": {
+                "title": "Choose your exercise",
+                "body": "Let's start off with some maths! \n\nWhich exercise would you like to do?",
+                "options": [
+                    "Exercise 1 (normal)",
+                    "Exercise 2 (hard)",
+                    "Exercise 3 (expert)"
+                ],
+                "controller": "attendee"
+            }
+        },
+        {
+            "type": "SlideCollection",
+            "collection": [
+                {
+                    "type": "TextAnswerSlide",
+                    "content": {
+                        "title": "Addition",
+                        "body": "2 + 5 = ?",
+                        "validation": ["7", "seven"],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "TextAnswerSlide",
+                    "content": {
+                        "title": "Subtraction",
+                        "body": "2 - 5 = ?",
+                        "validation": ["-3", "minus three", "minus 3", "- 3"],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "TextAnswerSlide",
+                    "content": {
+                        "title": "Addition and Subtraction",
+                        "body": "2 + 7 - 4 = ?",
+                        "validation": ["5", "five"],
+                        "controller": "attendee"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "PlainSlide",
+            "content": {
+                "title": "Good Job!",
+                "body": ""
+            }
+        },
+        {
+            "type": "SlideChoiceSlide",
+            "content": {
+                "title": "Trivia Time!",
+                "body": "Choose the topic of your quiz",
+                "options": ["Geography", "History", "Technical"],
+                "controller": "presenter"
+            }
+        },
+        {
+            "type": "SlideCollection",
+            "collection": [
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "Geography",
+                        "body": "Where is SDU Located?",
+                        "options": [
+                            "Odense",
+                            "Copenhagen",
+                            "Aarhus",
+                            "Aalborg"
+                        ],
+                        "validation": [0],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "History",
+                        "body": "What year is it?",
+                        "options": ["2019", "2020", "2002", "1950"],
+                        "validation": [1],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "Technical",
+                        "body": "How do you save in Word?",
+                        "options": [
+                            "CTRL + S",
+                            "CTRL + SHIFT + S",
+                            "SHIFT + S",
+                            "CTRL + ALT + SHIFT + S"
+                        ],
+                        "validation": [0, 1],
+                        "controller": "attendee"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "SlideCollection",
+            "collection": [
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "Geography",
+                        "body": "What is the capitol of USA?",
+                        "options": [
+                            "New York",
+                            "Chicago",
+                            "Washington",
+                            "Los Angeles"
+                        ],
+                        "validation": [1],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "History",
+                        "body": "What year did mankind first step on the moon?",
+                        "options": ["1959", "1969", "1949", "1979"],
+                        "validation": [1],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "Technical",
+                        "body": "How many bits are there in a byte?",
+                        "options": ["2", "8", "64", "1024"],
+                        "validation": [1],
+                        "controller": "attendee"
+                    }
+                }
+            ]
+        }
+    ]
+}

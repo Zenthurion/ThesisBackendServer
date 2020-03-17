@@ -1,20 +1,84 @@
-import Slide from "./Slide";
-import {IPresentation} from "./models/presentation.model";
+import Slide from './Slide';
+import { IPresentation } from './models/presentation.model';
+import ContentSlide from './ContentSlide';
+import BaseSlide from './BaseSlide';
+import SlideCollection from './SlideCollection';
 
 export default class Presentation {
     private name: string;
-    private slides: Slide[] = [];
+    private slides: BaseSlide[] = [];
 
-    constructor(rawPresentation: IPresentation) {
-        this.name = rawPresentation.name;
+    static individualExerciseSlide: ContentSlide = {
+        type: 'PlainSlide',
+        content: {
+            title: 'Individual Exercise',
+            body: 'Look at your own screen for your exercise'
+        }
+    };
 
-        rawPresentation.content.forEach((slide) => {
-            this.slides.push(new Slide(slide.title, slide.body, slide.hasNext, slide.hasPrevious));
+    constructor(raw) {
+        this.name = raw.hasOwnProperty('name') ? raw.name : 'unnamed';
+
+        if (!raw.hasOwnProperty('slides')) {
+            console.log('No slides in presentation!');
+            return;
+        }
+
+        raw.slides.forEach(slide => {
+            if (slide === undefined) {
+                console.log('A slide is undefined');
+                return;
+            }
+            if (!slide.hasOwnProperty('type')) {
+                console.log('Missing type property!');
+                return;
+            }
+
+            const type = slide.type;
+            switch (type) {
+                case 'PlainSlide':
+                    this.slides.push(this.createPlainSlide(slide));
+                    break;
+                case 'MultipleChoiceSlide':
+                    this.slides.push(this.createMultipleChoiceSlide(slide));
+                    break;
+                case 'TextAnswerSlide':
+                    this.slides.push(this.createTextAnswerSlide(slide));
+                    break;
+                case 'SlideChoiceSlide':
+                    this.slides.push(this.createSlideChoiceSlide(slide));
+                    break;
+                case 'SlideCollection':
+                    this.slides.push(this.createSlideCollection(slide));
+                    break;
+            }
         });
     }
 
+    private createPlainSlide = (slide: any) => {
+        return new ContentSlide(slide);
+    };
+
+    private createMultipleChoiceSlide = (slide: any) => {
+        return new ContentSlide(slide);
+    };
+
+    private createTextAnswerSlide = (slide: any) => {
+        return new ContentSlide(slide);
+    };
+
+    private createSlideChoiceSlide = (slide: any) => {
+        return new ContentSlide(slide);
+    };
+
+    private createSlideCollection = (slide: any) => {
+        // console.log(slide);
+
+        return new SlideCollection(slide);
+    };
+
     slide = (index: number) => {
-        if(index >= this.slides.length || index < 0) {
+        if (index >= this.slides.length || index < 0) {
             return undefined;
         }
         return this.slides[index];
