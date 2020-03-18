@@ -10,7 +10,6 @@ import PresenterEvents, { ISessionDataData } from './events/PresenterEvents';
 
 export default class Session {
     presenter: Socket;
-    presenterId: string;
     sessionId: string;
     presentation: Presentation;
     currentSlideIndex: number = 0;
@@ -18,12 +17,12 @@ export default class Session {
     attendees: Attendee[] = [];
 
     constructor(
-        presenterId: string,
+        presenter: Socket,
         sessionId: string,
         presentation: Presentation
     ) {
         this.presentation = presentation;
-        this.presenterId = presenterId;
+        this.presenter = presenter;
         this.sessionId = sessionId;
     }
 
@@ -40,11 +39,12 @@ export default class Session {
     };
 
     addAttendee = (attendee: Attendee) => {
+        this.attendees.push(attendee);
+
         const data: ISessionDataData = {
-            students: this.attendees.map(a => a.name)
+            attendees: this.attendees.map(a => a.name)
         };
         this.presenter.emit(PresenterEvents.EmitSessionData, data);
-        this.attendees.push(attendee);
     };
 
     removeAttendee = (attendee: Attendee) => {

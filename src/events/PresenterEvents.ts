@@ -123,7 +123,7 @@ export interface ISessionDataData {
     /**
      * A list of students currently in the session.
      */
-    students: string[];
+    attendees: string[];
 }
 
 /**

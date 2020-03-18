@@ -38,7 +38,7 @@ function handleRequestNewSession(
     // 1. Create new session
     const presentation = getPresentation(message.presentationRef);
     const sessionId = getNewSessionId();
-    const session = new Session(socket.id, sessionId, presentation);
+    const session = new Session(socket, sessionId, presentation);
     server.sessions.push(session);
     console.log(`Session [${session.sessionId}] created`);
 
