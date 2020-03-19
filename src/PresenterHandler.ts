@@ -48,7 +48,7 @@ function handleRequestNewSession(
     // 2. Emit session id
     const sessionResult: INewSessionData = {
         sessionId: session.sessionId,
-        presentationStructure: {}
+        presentationStructure: presentation.getStructure()
     };
     socket.emit(PresenterEvents.EmitNewSessionCreated, sessionResult);
 

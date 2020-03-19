@@ -72,8 +72,6 @@ export default class Presentation {
     };
 
     private createSlideCollection = (slide: any) => {
-        // console.log(slide);
-
         return new SlideCollection(slide);
     };
 
@@ -86,5 +84,14 @@ export default class Presentation {
 
     slideCount = () => {
         return this.slides.length;
+    };
+
+    getStructure = (): any => {
+        return this.slides.map(slide => {
+            return {
+                type: slide.type,
+                title: slide instanceof ContentSlide ? slide.content.title : ''
+            };
+        });
     };
 }
