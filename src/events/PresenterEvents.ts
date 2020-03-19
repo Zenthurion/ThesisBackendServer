@@ -88,7 +88,12 @@ export interface IPresentationListResultData {
     /**
      * A list of tuples containing a reference to a presentation and the title of that presentation respectively
      */
-    presentations: [string, string][];
+    presentations: IPresentationListItem[];
+}
+
+export interface IPresentationListItem {
+    ref: string;
+    title: string;
 }
 
 /**

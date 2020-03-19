@@ -5,7 +5,9 @@ import { getPresentation } from './PresentationsProvider';
 import SlideCollection from './SlideCollection';
 import PresenterEvents, {
     IRequestNewSessionData,
-    IRequestSlideChangeData
+    IRequestSlideChangeData,
+    IPresentationListResultData,
+    INewSessionData
 } from './events/PresenterEvents';
 import ClientEvents, { IPresentationContentData } from './events/ClientEvents';
 
@@ -25,9 +27,10 @@ export function initialiseNewPresenter(server: ThesisServer, socket: Socket) {
 
 function handleRequestPresentationsList(server: ThesisServer, socket: Socket) {
     // 1. Emit presentations list
-    socket.emit(PresenterEvents.EmitPresentationsListResult, {
+    const message: IPresentationListResultData = {
         presentations: [{ ref: '0', title: 'First Presentation' }]
-    });
+    };
+    socket.emit(PresenterEvents.EmitPresentationsListResult, message);
 }
 
 function handleRequestNewSession(
@@ -43,10 +46,11 @@ function handleRequestNewSession(
     console.log(`Session [${session.sessionId}] created`);
 
     // 2. Emit session id
-    socket.emit(
-        PresenterEvents.EmitNewSessionCreated,
-        `{"sessionId": "${session.sessionId}"}`
-    );
+    const sessionResult: INewSessionData = {
+        sessionId: session.sessionId,
+        presentationStructure: {}
+    };
+    socket.emit(PresenterEvents.EmitNewSessionCreated, sessionResult);
 
     // 3. Emit current content
     const content: IPresentationContentData = {

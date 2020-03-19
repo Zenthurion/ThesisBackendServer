@@ -61,6 +61,11 @@ export interface IValidateSessionIdData {
      * Session ID being validated
      */
     sessionId: string;
+
+    /**
+     * Result of validation
+     */
+    isValid: boolean;
 }
 
 /**

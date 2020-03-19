@@ -36,10 +36,11 @@ function handleValidateSessionId(
     const valid = server.validateSessionId(message.sessionId);
 
     // 2. Emit result
-    socket.emit(
-        AttendeeEvents.EmitSessionIdValidated,
-        `{ "sessionId": "${message.sessionId}", "isValid": ${valid} }`
-    );
+    const validationResult: IValidateSessionIdData = {
+        sessionId: message.sessionId,
+        isValid: valid
+    };
+    socket.emit(AttendeeEvents.EmitSessionIdValidated, validationResult);
 }
 
 function handleJoinSession(
@@ -55,8 +56,6 @@ function handleJoinSession(
         socket.emit(AttendeeEvents.EmitJoinResult, result);
         return;
     }
-
-    console.log('b' + message.sessionId);
 
     // 2. Join session
     const session = server.getSession(message.sessionId);
