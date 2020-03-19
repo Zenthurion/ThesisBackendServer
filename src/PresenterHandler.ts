@@ -61,17 +61,17 @@ function handleRequestNewSession(
 
     // 4. Listen for slide change
     socket.on(PresenterEvents.RequestSlideChange, msg =>
-        handleRequestSlideChange(server, socket, session, JSON.parse(msg))
+        handleRequestSlideChange(server, socket, session, msg)
     );
 
     // 5. Listen for group operations
     socket.on(PresenterEvents.AssignContent, msg =>
-        handleAssignContent(server, socket, session, JSON.parse(msg))
+        handleAssignContent(server, socket, session, msg)
     );
 
     // 7. Listen for content assignment
     socket.on(PresenterEvents.GroupOperation, msg =>
-        handleGroupOperation(server, socket, session, JSON.parse(msg))
+        handleGroupOperation(server, socket, session, msg)
     );
 
     console.log('Presenter connected');
