@@ -66,14 +66,6 @@ export default class PresenterEvents extends ClientEvents {
 
     /**
      * Teacher -> Server
-     * Event to assign content to specific students
-     *
-     * See IAssignContentData
-     */
-    static AssignContent = 'assign-content';
-
-    /**
-     * Teacher -> Server
      * Event to operate on a group of students, such as adding, removing, disbanding or creating.
      *
      * See IGroupOperationData
@@ -146,20 +138,6 @@ export interface IRequestSlideChangeData {
      * Slide index to change to
      */
     slide: number;
-}
-
-/**
- * Interface for data related to PresenterEvents.AssignContent event
- */
-export interface IAssignContentData {
-    /**
-     * The IDs of students being assigned content
-     */
-    target: string[];
-    /**
-     * The reference to which slide is being assigned
-     */
-    slide: string;
 }
 
 /**
