@@ -3,6 +3,7 @@ import { IPresentation } from './models/presentation.model';
 import ContentSlide from './ContentSlide';
 import BaseSlide from './BaseSlide';
 import SlideCollection from './SlideCollection';
+import Attendee from './Attendee';
 
 export default class Presentation {
     private name: string;
@@ -84,6 +85,21 @@ export default class Presentation {
 
     slideCount = () => {
         return this.slides.length;
+    };
+
+    assignContent = (
+        attendee: Attendee,
+        slideIndex: number,
+        subIndex: number
+    ) => {
+        const slide = this.slide(slideIndex);
+        if (slide !== undefined) {
+            if (slide instanceof SlideCollection) {
+                slide.assignAttendee(attendee, subIndex);
+            }
+        }
+        console.log('Slide is not a collection! ' + slideIndex);
+        return null;
     };
 
     getStructure = (): any => {

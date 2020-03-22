@@ -71,7 +71,7 @@ export default class Session {
                 };
             } else {
                 return {
-                    currentSlide: slide.slides[0],
+                    currentSlide: slide.contentForAttendee(attendee),
                     index: this.currentSlideIndex
                 };
             }
@@ -81,5 +81,16 @@ export default class Session {
                 index: this.currentSlideIndex
             };
         }
+    }
+
+    getAttendee(attendeeName: string) {
+        let attendee: Attendee;
+        this.attendees.forEach(a => {
+            if (a.name === attendeeName) {
+                attendee = a;
+                return;
+            }
+        });
+        return attendee;
     }
 }

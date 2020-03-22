@@ -9,7 +9,10 @@ import PresenterEvents, {
     IPresentationListResultData,
     INewSessionData
 } from './events/PresenterEvents';
-import ClientEvents, { IPresentationContentData } from './events/ClientEvents';
+import ClientEvents, {
+    IPresentationContentData,
+    IAssignContentData
+} from './events/ClientEvents';
 
 export function initialiseNewPresenter(server: ThesisServer, socket: Socket) {
     // 1. Listen for presentation list request
@@ -66,7 +69,7 @@ function handleRequestNewSession(
 
     // 5. Listen for group operations
     socket.on(PresenterEvents.AssignContent, msg =>
-        handleAssignContent(server, socket, session, msg)
+        handleAssignContent(session, msg)
     );
 
     // 7. Listen for content assignment
@@ -106,13 +109,18 @@ function handleRequestSlideChange(
     console.log(`Slide updated to ${message.slide}`);
 }
 
-function handleAssignContent(
-    server: ThesisServer,
-    socket: Socket,
-    session: Session,
-    message: any
-) {
-    // 1. Assign content
+function handleAssignContent(session: Session, message: IAssignContentData) {
+    message.target.forEach(target => {
+        const attendee = session.getAttendee(target);
+        if (attendee === undefined) {
+            console.log('Err! Attendee not found! [' + target + ']');
+        }
+        session.presentation.assignContent(
+            attendee,
+            message.slideIndex,
+            message.subIndex
+        );
+    });
 }
 
 function handleGroupOperation(
