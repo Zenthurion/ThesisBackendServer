@@ -6,22 +6,23 @@ import Attendee from './Attendee';
 import AttendeeEvents, {
     IJoinSessionData,
     IJoinResultData,
-    IValidateSessionIdData
+    IValidateSessionIdData,
+    ISessionIdValidatedData
 } from './events/AttendeeEvents';
 
 export function initialiseNewAttendee(server: ThesisServer, socket: Socket) {
     // 1. Listen for session id validation
     socket.on(AttendeeEvents.ValidateSessionId, message =>
-        handleValidateSessionId(server, socket, JSON.parse(message))
+        handleValidateSessionId(server, socket, message)
     );
 
     // 2. Listen for join session attempt
     socket.on(AttendeeEvents.JoinSession, message =>
-        handleJoinSession(server, socket, JSON.parse(message))
+        handleJoinSession(server, socket, message)
     );
 
     socket.on(AttendeeEvents.Interaction, message =>
-        handleInteraction(server, socket, JSON.parse(message))
+        handleInteraction(server, socket, message)
     );
 
     console.log('Attendee connected');
@@ -36,7 +37,7 @@ function handleValidateSessionId(
     const valid = server.validateSessionId(message.sessionId);
 
     // 2. Emit result
-    const validationResult: IValidateSessionIdData = {
+    const validationResult: ISessionIdValidatedData = {
         sessionId: message.sessionId,
         isValid: valid
     };

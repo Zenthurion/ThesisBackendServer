@@ -83,6 +83,9 @@ export interface IPresentationListResultData {
     presentations: IPresentationListItem[];
 }
 
+/**
+ * Interface for items associated with the presentations array of the IPresentationListResultData interface
+ */
 export interface IPresentationListItem {
     ref: string;
     title: string;
@@ -100,7 +103,38 @@ export interface INewSessionData {
     /**
      * The graph structure of the presentation including slide titles
      */
-    presentationStructure: any;
+    presentationStructure: IPresentationStructure;
+}
+
+/**
+ * Interface for the presentation structure emitted to the presenter client through INewSessionData
+ */
+export interface IPresentationStructure {
+    slides: IPresentationStructureSlide[];
+}
+
+/**
+ * Base interface of a slide in the presentation structure of IPresentationStructure
+ */
+export interface IPresentationStructureSlide {
+    type: string;
+}
+
+/**
+ * Presentation structure interface for slides containing content
+ */
+export interface IPresentationStructureContentSlide
+    extends IPresentationStructureSlide {
+    title: string;
+    body: string;
+}
+
+/**
+ * Presentation structure interface for slides containing a collection of slides
+ */
+export interface IPresentationStructureCollectionSlide
+    extends IPresentationStructureSlide {
+    slides: IPresentationStructureContentSlide[];
 }
 
 /**

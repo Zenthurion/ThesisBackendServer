@@ -4,6 +4,12 @@ import ContentSlide from './ContentSlide';
 import BaseSlide from './BaseSlide';
 import SlideCollection from './SlideCollection';
 import Attendee from './Attendee';
+import {
+    IPresentationStructure,
+    IPresentationStructureSlide,
+    IPresentationStructureCollectionSlide,
+    IPresentationStructureContentSlide
+} from './events/PresenterEvents';
 
 export default class Presentation {
     private name: string;
@@ -102,12 +108,42 @@ export default class Presentation {
         return null;
     };
 
-    getStructure = (): any => {
-        return this.slides.map(slide => {
-            return {
-                type: slide.type,
-                title: slide instanceof ContentSlide ? slide.content.title : ''
-            };
+    getStructure = (): IPresentationStructure => {
+        const structure: IPresentationStructure = {
+            slides: []
+        };
+        this.slides.forEach(s => {
+            let slide: IPresentationStructureSlide;
+            if (s instanceof SlideCollection) {
+                const collection: IPresentationStructureCollectionSlide = {
+                    type: 'collection',
+                    slides: s.slides.map(sub =>
+                        this.getContentSlideForStructure(sub)
+                    )
+                };
+                slide = collection;
+            } else if (s instanceof ContentSlide) {
+                slide = this.getContentSlideForStructure(s);
+            } else {
+                console.log(
+                    'Error! Slide for structure is of unknown type! ' + typeof s
+                );
+                return;
+            }
+            structure.slides.push(slide);
         });
+        return structure;
+    };
+
+    private getContentSlideForStructure = (
+        slide: ContentSlide
+    ): IPresentationStructureContentSlide => {
+        const content: IPresentationStructureContentSlide = {
+            type: slide.type,
+            title: slide.content.title,
+            body: slide.content.body
+        };
+
+        return content;
     };
 }
