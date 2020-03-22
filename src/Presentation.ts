@@ -116,7 +116,7 @@ export default class Presentation {
             let slide: IPresentationStructureSlide;
             if (s instanceof SlideCollection) {
                 const collection: IPresentationStructureCollectionSlide = {
-                    type: 'collection',
+                    type: 'SlideCollection',
                     slides: s.slides.map(sub =>
                         this.getContentSlideForStructure(sub)
                     )
