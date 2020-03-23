@@ -45,18 +45,14 @@ export default class Session {
         this.attendees.push(attendee);
 
         const data: ISessionDataData = {
-            attendees:
+            attendees: this.getAttendeeDataList()
         };
         this.presenter.emit(PresenterEvents.EmitSessionData, data);
     };
 
-    getAttendeeDataList = () => {this.attendees.map(a => {
-        const attendeeData: IAttendeeData = {
-            name: a.name,
-            assignments: this.presentation.getAssignments(a)
-        };
-        return attendeeData;
-    })};
+    getAttendeeDataList = () => {
+        return this.attendees.map(attendee => this.getAttendeeData(attendee));
+    };
 
     getAttendeeData = (attendee: Attendee) => {
         const attendeeData: IAttendeeData = {
