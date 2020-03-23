@@ -135,6 +135,22 @@ export default class Presentation {
         return structure;
     };
 
+    getAssignments(attendee: Attendee): { [slideIndex: number]: number } {
+        const assignments: { [slideIndex: number]: number } = {};
+        this.slides.forEach((slide, index) => {
+            if (slide.type !== 'SlideCollection') return;
+
+            const collection = slide as SlideCollection;
+            const subSlide = collection.assignments[attendee.name];
+
+            if (subSlide < 0) return;
+
+            assignments[index] = subSlide;
+        });
+
+        return assignments;
+    }
+
     private getContentSlideForStructure = (
         slide: ContentSlide
     ): IPresentationStructureContentSlide => {

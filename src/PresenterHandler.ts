@@ -7,7 +7,9 @@ import PresenterEvents, {
     IRequestNewSessionData,
     IRequestSlideChangeData,
     IPresentationListResultData,
-    INewSessionData
+    INewSessionData,
+    ISessionDataData,
+    IAttendeeData
 } from './events/PresenterEvents';
 import ClientEvents, {
     IPresentationContentData,
@@ -69,7 +71,7 @@ function handleRequestNewSession(
 
     // 5. Listen for group operations
     socket.on(PresenterEvents.AssignContent, msg =>
-        handleAssignContent(session, msg)
+        handleAssignContent(socket, session, msg)
     );
 
     // 7. Listen for content assignment
@@ -109,7 +111,11 @@ function handleRequestSlideChange(
     console.log(`Slide updated to ${message.slide}`);
 }
 
-function handleAssignContent(session: Session, message: IAssignContentData) {
+function handleAssignContent(
+    socket: Socket,
+    session: Session,
+    message: IAssignContentData
+) {
     message.target.forEach(target => {
         const attendee = session.getAttendee(target);
         if (attendee === undefined) {
@@ -121,6 +127,11 @@ function handleAssignContent(session: Session, message: IAssignContentData) {
             message.subIndex
         );
     });
+
+    const sessionData: ISessionDataData = {
+        attendees: session.getAttendeeDataList()
+    };
+    this.socket.emit(PresenterEvents.EmitSessionData, sessionData);
 }
 
 function handleGroupOperation(

@@ -6,7 +6,10 @@ import BaseSlide from './BaseSlide';
 import Attendee from './Attendee';
 import { IPresentationContentData } from './events/ClientEvents';
 import SlideCollection from './SlideCollection';
-import PresenterEvents, { ISessionDataData } from './events/PresenterEvents';
+import PresenterEvents, {
+    ISessionDataData,
+    IAttendeeData
+} from './events/PresenterEvents';
 
 export default class Session {
     presenter: Socket;
@@ -42,9 +45,25 @@ export default class Session {
         this.attendees.push(attendee);
 
         const data: ISessionDataData = {
-            attendees: this.attendees.map(a => a.name)
+            attendees:
         };
         this.presenter.emit(PresenterEvents.EmitSessionData, data);
+    };
+
+    getAttendeeDataList = () => {this.attendees.map(a => {
+        const attendeeData: IAttendeeData = {
+            name: a.name,
+            assignments: this.presentation.getAssignments(a)
+        };
+        return attendeeData;
+    })};
+
+    getAttendeeData = (attendee: Attendee) => {
+        const attendeeData: IAttendeeData = {
+            name: attendee.name,
+            assignments: this.presentation.getAssignments(attendee)
+        };
+        return attendeeData;
     };
 
     removeAttendee = (attendee: Attendee) => {
