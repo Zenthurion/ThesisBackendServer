@@ -154,7 +154,22 @@ export interface ISessionDataData {
     /**
      * A list of students currently in the session.
      */
-    attendees: string[];
+    attendees: IAttendeeData[];
+}
+
+/**
+ * Interface for attendee data being transmitted to presenter clients
+ */
+export interface IAttendeeData {
+    /**
+     * Name of attendee
+     */
+    name: string;
+
+    /**
+     * Data pair of slide index and sub index for collections
+     */
+    assignments: { [slideIndex: number]: number };
 }
 
 /**
