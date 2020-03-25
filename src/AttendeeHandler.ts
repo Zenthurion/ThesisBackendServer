@@ -92,7 +92,6 @@ function handleSelfAssignment(
         data.subIndex
     );
     session.emitSessionData();
-    console.log(`assigned content to self [${attendee.name}]`);
 }
 
 function handleInteraction(server: ThesisServer, socket: Socket, message: any) {
