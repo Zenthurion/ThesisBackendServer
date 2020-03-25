@@ -118,6 +118,7 @@ function handleAssignContent(
         const attendee = session.getAttendee(target);
         if (attendee === undefined) {
             console.log('Err! Attendee not found! [' + target + ']');
+            return;
         }
         session.presentation.assignContent(
             attendee,
