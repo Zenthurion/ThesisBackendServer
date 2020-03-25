@@ -28,9 +28,9 @@ export default class ClientEvents {
  */
 export interface IAssignContentData {
     /**
-     * The IDs of students being assigned content
+     * The IDs of students being assigned content. If undefined or empty, the target is either the attendee itself or if from a presenter, all connected attendees
      */
-    target: string[];
+    target?: string[];
     /**
      * The reference to which slide collection is being operated on
      */

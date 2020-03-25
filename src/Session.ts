@@ -44,10 +44,7 @@ export default class Session {
     addAttendee = (attendee: Attendee) => {
         this.attendees.push(attendee);
 
-        const data: ISessionDataData = {
-            attendees: this.getAttendeeDataList()
-        };
-        this.presenter.emit(PresenterEvents.EmitSessionData, data);
+        this.emitSessionData();
     };
 
     getAttendeeDataList = () => {
@@ -98,7 +95,7 @@ export default class Session {
         }
     }
 
-    getAttendee(attendeeName: string) {
+    getAttendee = (attendeeName: string) => {
         let attendee: Attendee;
         this.attendees.forEach(a => {
             if (a.name === attendeeName) {
@@ -107,5 +104,11 @@ export default class Session {
             }
         });
         return attendee;
-    }
+    };
+    emitSessionData = () => {
+        const data: ISessionDataData = {
+            attendees: this.getAttendeeDataList()
+        };
+        this.presenter.emit(PresenterEvents.EmitSessionData, data);
+    };
 }

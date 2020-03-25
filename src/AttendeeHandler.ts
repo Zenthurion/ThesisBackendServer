@@ -9,6 +9,7 @@ import AttendeeEvents, {
     IValidateSessionIdData,
     ISessionIdValidatedData
 } from './events/AttendeeEvents';
+import { IAssignContentData } from './events/ClientEvents';
 
 export function initialiseNewAttendee(server: ThesisServer, socket: Socket) {
     // 1. Listen for session id validation
@@ -20,11 +21,6 @@ export function initialiseNewAttendee(server: ThesisServer, socket: Socket) {
     socket.on(AttendeeEvents.JoinSession, message =>
         handleJoinSession(server, socket, message)
     );
-
-    socket.on(AttendeeEvents.Interaction, message =>
-        handleInteraction(server, socket, message)
-    );
-
     console.log('Attendee connected');
 }
 
@@ -73,6 +69,30 @@ function handleJoinSession(
     socket.on(AttendeeEvents.Disconnect, () =>
         session.removeAttendee(attendee)
     );
+
+    // 6. Handle interaction events
+    socket.on(AttendeeEvents.Interaction, data =>
+        handleInteraction(server, socket, data)
+    );
+
+    // 7. Handle self-assignment
+    socket.on(AttendeeEvents.AssignContent, data =>
+        handleSelfAssignment(attendee, session, data)
+    );
+}
+
+function handleSelfAssignment(
+    attendee: Attendee,
+    session: Session,
+    data: IAssignContentData
+) {
+    session.presentation.assignContent(
+        attendee,
+        data.slideIndex,
+        data.subIndex
+    );
+    session.emitSessionData();
+    console.log(`assigned content to self [${attendee.name}]`);
 }
 
 function handleInteraction(server: ThesisServer, socket: Socket, message: any) {

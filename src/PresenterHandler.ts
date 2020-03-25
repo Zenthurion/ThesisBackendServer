@@ -114,19 +114,28 @@ function handleAssignContent(
     session: Session,
     message: IAssignContentData
 ) {
-    message.target.forEach(target => {
-        const attendee = session.getAttendee(target);
-        if (attendee === undefined) {
-            console.log('Err! Attendee not found! [' + target + ']');
-            return;
-        }
-        session.presentation.assignContent(
-            attendee,
-            message.slideIndex,
-            message.subIndex
-        );
-    });
-
+    if (message.target === undefined || message.target.length === 0) {
+        session.attendees.forEach(attendee => {
+            session.presentation.assignContent(
+                attendee,
+                message.slideIndex,
+                message.subIndex
+            );
+        });
+    } else {
+        message.target.forEach(target => {
+            const attendee = session.getAttendee(target);
+            if (attendee === undefined) {
+                console.log('Err! Attendee not found! [' + target + ']');
+                return;
+            }
+            session.presentation.assignContent(
+                attendee,
+                message.slideIndex,
+                message.subIndex
+            );
+        });
+    }
     const sessionData: ISessionDataData = {
         attendees: session.getAttendeeDataList()
     };
