@@ -130,7 +130,14 @@ function handleAssignContent(
     const sessionData: ISessionDataData = {
         attendees: session.getAttendeeDataList()
     };
-    this.socket.emit(PresenterEvents.EmitSessionData, sessionData);
+    socket.emit(PresenterEvents.EmitSessionData, sessionData);
+
+    session.attendees.forEach(attendee => {
+        attendee.socket.emit(
+            ClientEvents.EmitPresentationContent,
+            session.getSlideContent(attendee)
+        );
+    });
 }
 
 function handleGroupOperation(
