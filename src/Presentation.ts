@@ -102,6 +102,7 @@ export default class Presentation {
         if (slide !== undefined) {
             if (slide instanceof SlideCollection) {
                 slide.assignAttendee(attendee, subIndex);
+                return;
             }
         }
         console.log('Slide is not a collection! ' + slideIndex);
