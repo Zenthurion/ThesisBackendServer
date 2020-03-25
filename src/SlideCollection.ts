@@ -23,12 +23,12 @@ export default class SlideCollection extends BaseSlide {
     }
 
     assignAttendee = (attendee: Attendee, index: number) => {
-        this.assignments[attendee.socket.id] = index;
+        this.assignments[attendee.name] = index;
     };
 
     contentForAttendee = (attendee: Attendee): ContentSlide => {
-        const index = this.assignments[attendee.socket.id];
-        if (index === undefined) {
+        const index = this.assignments[attendee.name];
+        if (index === undefined || index < 0) {
             return this.slides[0];
         }
         return this.slides[index];
