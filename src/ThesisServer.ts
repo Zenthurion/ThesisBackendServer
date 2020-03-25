@@ -84,11 +84,7 @@ export default class ThesisServer {
         let validated = false;
         console.log('id: ' + sessionId);
         this.sessions.forEach((session, i) => {
-            console.log(
-                `checking if ${session.sessionId} and ${sessionId} matches`
-            );
             if (session.sessionId === sessionId) {
-                console.log('session id validated');
                 validated = true;
                 return;
             }

@@ -107,8 +107,6 @@ function handleRequestSlideChange(
             session.getSlideContent(attendee)
         );
     });
-
-    console.log(`Slide updated to ${message.slide}`);
 }
 
 function handleAssignContent(
