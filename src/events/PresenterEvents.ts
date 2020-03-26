@@ -66,14 +66,6 @@ export default class PresenterEvents extends ClientEvents {
 
     /**
      * Teacher -> Server
-     * Event to assign content to specific students
-     *
-     * See IAssignContentData
-     */
-    static AssignContent = 'assign-content';
-
-    /**
-     * Teacher -> Server
      * Event to operate on a group of students, such as adding, removing, disbanding or creating.
      *
      * See IGroupOperationData
@@ -88,7 +80,15 @@ export interface IPresentationListResultData {
     /**
      * A list of tuples containing a reference to a presentation and the title of that presentation respectively
      */
-    presentations: [string, string][];
+    presentations: IPresentationListItem[];
+}
+
+/**
+ * Interface for items associated with the presentations array of the IPresentationListResultData interface
+ */
+export interface IPresentationListItem {
+    ref: string;
+    title: string;
 }
 
 /**
@@ -103,7 +103,38 @@ export interface INewSessionData {
     /**
      * The graph structure of the presentation including slide titles
      */
-    presentationStructure: any;
+    presentationStructure: IPresentationStructure;
+}
+
+/**
+ * Interface for the presentation structure emitted to the presenter client through INewSessionData
+ */
+export interface IPresentationStructure {
+    slides: IPresentationStructureSlide[];
+}
+
+/**
+ * Base interface of a slide in the presentation structure of IPresentationStructure
+ */
+export interface IPresentationStructureSlide {
+    type: string;
+}
+
+/**
+ * Presentation structure interface for slides containing content
+ */
+export interface IPresentationStructureContentSlide
+    extends IPresentationStructureSlide {
+    title: string;
+    body: string;
+}
+
+/**
+ * Presentation structure interface for slides containing a collection of slides
+ */
+export interface IPresentationStructureCollectionSlide
+    extends IPresentationStructureSlide {
+    slides: IPresentationStructureContentSlide[];
 }
 
 /**
@@ -123,7 +154,22 @@ export interface ISessionDataData {
     /**
      * A list of students currently in the session.
      */
-    students: string[];
+    attendees: IAttendeeData[];
+}
+
+/**
+ * Interface for attendee data being transmitted to presenter clients
+ */
+export interface IAttendeeData {
+    /**
+     * Name of attendee
+     */
+    name: string;
+
+    /**
+     * Data pair of slide index and sub index for collections
+     */
+    assignments: { [slideIndex: number]: number };
 }
 
 /**
@@ -141,20 +187,6 @@ export interface IRequestSlideChangeData {
      * Slide index to change to
      */
     slide: number;
-}
-
-/**
- * Interface for data related to PresenterEvents.AssignContent event
- */
-export interface IAssignContentData {
-    /**
-     * The IDs of students being assigned content
-     */
-    target: string[];
-    /**
-     * The reference to which slide is being assigned
-     */
-    slide: string;
 }
 
 /**

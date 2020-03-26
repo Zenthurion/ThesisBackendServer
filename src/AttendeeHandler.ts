@@ -6,24 +6,21 @@ import Attendee from './Attendee';
 import AttendeeEvents, {
     IJoinSessionData,
     IJoinResultData,
-    IValidateSessionIdData
+    IValidateSessionIdData,
+    ISessionIdValidatedData
 } from './events/AttendeeEvents';
+import { IAssignContentData } from './events/ClientEvents';
 
 export function initialiseNewAttendee(server: ThesisServer, socket: Socket) {
     // 1. Listen for session id validation
     socket.on(AttendeeEvents.ValidateSessionId, message =>
-        handleValidateSessionId(server, socket, JSON.parse(message))
+        handleValidateSessionId(server, socket, message)
     );
 
     // 2. Listen for join session attempt
     socket.on(AttendeeEvents.JoinSession, message =>
-        handleJoinSession(server, socket, JSON.parse(message))
+        handleJoinSession(server, socket, message)
     );
-
-    socket.on(AttendeeEvents.Interaction, message =>
-        handleInteraction(server, socket, JSON.parse(message))
-    );
-
     console.log('Attendee connected');
 }
 
@@ -36,10 +33,11 @@ function handleValidateSessionId(
     const valid = server.validateSessionId(message.sessionId);
 
     // 2. Emit result
-    socket.emit(
-        AttendeeEvents.EmitSessionIdValidated,
-        `{ "sessionId": "${message.sessionId}", "isValid": ${valid} }`
-    );
+    const validationResult: ISessionIdValidatedData = {
+        sessionId: message.sessionId,
+        isValid: valid
+    };
+    socket.emit(AttendeeEvents.EmitSessionIdValidated, validationResult);
 }
 
 function handleJoinSession(
@@ -56,8 +54,6 @@ function handleJoinSession(
         return;
     }
 
-    console.log('b' + message.sessionId);
-
     // 2. Join session
     const session = server.getSession(message.sessionId);
     const attendee = new Attendee(socket, session, message.username);
@@ -73,6 +69,29 @@ function handleJoinSession(
     socket.on(AttendeeEvents.Disconnect, () =>
         session.removeAttendee(attendee)
     );
+
+    // 6. Handle interaction events
+    socket.on(AttendeeEvents.Interaction, data =>
+        handleInteraction(server, socket, data)
+    );
+
+    // 7. Handle self-assignment
+    socket.on(AttendeeEvents.AssignContent, data =>
+        handleSelfAssignment(attendee, session, data)
+    );
+}
+
+function handleSelfAssignment(
+    attendee: Attendee,
+    session: Session,
+    data: IAssignContentData
+) {
+    session.presentation.assignContent(
+        attendee,
+        data.slideIndex,
+        data.subIndex
+    );
+    session.emitSessionData();
 }
 
 function handleInteraction(server: ThesisServer, socket: Socket, message: any) {

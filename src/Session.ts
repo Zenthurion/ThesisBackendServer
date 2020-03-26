@@ -6,9 +6,13 @@ import BaseSlide from './BaseSlide';
 import Attendee from './Attendee';
 import { IPresentationContentData } from './events/ClientEvents';
 import SlideCollection from './SlideCollection';
+import PresenterEvents, {
+    ISessionDataData,
+    IAttendeeData
+} from './events/PresenterEvents';
 
 export default class Session {
-    presenterId: string;
+    presenter: Socket;
     sessionId: string;
     presentation: Presentation;
     currentSlideIndex: number = 0;
@@ -16,12 +20,12 @@ export default class Session {
     attendees: Attendee[] = [];
 
     constructor(
-        presenterId: string,
+        presenter: Socket,
         sessionId: string,
         presentation: Presentation
     ) {
         this.presentation = presentation;
-        this.presenterId = presenterId;
+        this.presenter = presenter;
         this.sessionId = sessionId;
     }
 
@@ -39,10 +43,24 @@ export default class Session {
 
     addAttendee = (attendee: Attendee) => {
         this.attendees.push(attendee);
+        this.emitSessionData();
+    };
+
+    getAttendeeDataList = () => {
+        return this.attendees.map(attendee => this.getAttendeeData(attendee));
+    };
+
+    getAttendeeData = (attendee: Attendee) => {
+        const attendeeData: IAttendeeData = {
+            name: attendee.name,
+            assignments: this.presentation.getAssignments(attendee)
+        };
+        return attendeeData;
     };
 
     removeAttendee = (attendee: Attendee) => {
         this.attendees = this.attendees.filter(att => att !== attendee);
+        this.emitSessionData();
     };
 
     goToSlide(slide: number) {
@@ -65,7 +83,7 @@ export default class Session {
                 };
             } else {
                 return {
-                    currentSlide: slide.slides[0],
+                    currentSlide: slide.contentForAttendee(attendee),
                     index: this.currentSlideIndex
                 };
             }
@@ -76,4 +94,21 @@ export default class Session {
             };
         }
     }
+
+    getAttendee = (attendeeName: string) => {
+        let attendee: Attendee;
+        this.attendees.forEach(a => {
+            if (a.name === attendeeName) {
+                attendee = a;
+                return;
+            }
+        });
+        return attendee;
+    };
+    emitSessionData = () => {
+        const data: ISessionDataData = {
+            attendees: this.getAttendeeDataList()
+        };
+        this.presenter.emit(PresenterEvents.EmitSessionData, data);
+    };
 }

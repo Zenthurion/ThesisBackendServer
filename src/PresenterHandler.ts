@@ -5,9 +5,16 @@ import { getPresentation } from './PresentationsProvider';
 import SlideCollection from './SlideCollection';
 import PresenterEvents, {
     IRequestNewSessionData,
-    IRequestSlideChangeData
+    IRequestSlideChangeData,
+    IPresentationListResultData,
+    INewSessionData,
+    ISessionDataData,
+    IAttendeeData
 } from './events/PresenterEvents';
-import ClientEvents, { IPresentationContentData } from './events/ClientEvents';
+import ClientEvents, {
+    IPresentationContentData,
+    IAssignContentData
+} from './events/ClientEvents';
 
 export function initialiseNewPresenter(server: ThesisServer, socket: Socket) {
     // 1. Listen for presentation list request
@@ -25,9 +32,10 @@ export function initialiseNewPresenter(server: ThesisServer, socket: Socket) {
 
 function handleRequestPresentationsList(server: ThesisServer, socket: Socket) {
     // 1. Emit presentations list
-    socket.emit(PresenterEvents.EmitPresentationsListResult, {
+    const message: IPresentationListResultData = {
         presentations: [{ ref: '0', title: 'First Presentation' }]
-    });
+    };
+    socket.emit(PresenterEvents.EmitPresentationsListResult, message);
 }
 
 function handleRequestNewSession(
@@ -38,15 +46,16 @@ function handleRequestNewSession(
     // 1. Create new session
     const presentation = getPresentation(message.presentationRef);
     const sessionId = getNewSessionId();
-    const session = new Session(socket.id, sessionId, presentation);
+    const session = new Session(socket, sessionId, presentation);
     server.sessions.push(session);
     console.log(`Session [${session.sessionId}] created`);
 
     // 2. Emit session id
-    socket.emit(
-        PresenterEvents.EmitNewSessionCreated,
-        `{"sessionId": "${session.sessionId}"}`
-    );
+    const sessionResult: INewSessionData = {
+        sessionId: session.sessionId,
+        presentationStructure: presentation.getStructure()
+    };
+    socket.emit(PresenterEvents.EmitNewSessionCreated, sessionResult);
 
     // 3. Emit current content
     const content: IPresentationContentData = {
@@ -57,17 +66,17 @@ function handleRequestNewSession(
 
     // 4. Listen for slide change
     socket.on(PresenterEvents.RequestSlideChange, msg =>
-        handleRequestSlideChange(server, socket, session, JSON.parse(msg))
+        handleRequestSlideChange(server, socket, session, msg)
     );
 
     // 5. Listen for group operations
     socket.on(PresenterEvents.AssignContent, msg =>
-        handleAssignContent(server, socket, session, JSON.parse(msg))
+        handleAssignContent(socket, session, msg)
     );
 
     // 7. Listen for content assignment
     socket.on(PresenterEvents.GroupOperation, msg =>
-        handleGroupOperation(server, socket, session, JSON.parse(msg))
+        handleGroupOperation(server, socket, session, msg)
     );
 
     console.log('Presenter connected');
@@ -98,17 +107,46 @@ function handleRequestSlideChange(
             session.getSlideContent(attendee)
         );
     });
-
-    console.log(`Slide updated to ${message.slide}`);
 }
 
 function handleAssignContent(
-    server: ThesisServer,
     socket: Socket,
     session: Session,
-    message: any
+    message: IAssignContentData
 ) {
-    // 1. Assign content
+    if (message.target === undefined || message.target.length === 0) {
+        session.attendees.forEach(attendee => {
+            session.presentation.assignContent(
+                attendee,
+                message.slideIndex,
+                message.subIndex
+            );
+        });
+    } else {
+        message.target.forEach(target => {
+            const attendee = session.getAttendee(target);
+            if (attendee === undefined) {
+                console.log('Err! Attendee not found! [' + target + ']');
+                return;
+            }
+            session.presentation.assignContent(
+                attendee,
+                message.slideIndex,
+                message.subIndex
+            );
+        });
+    }
+    const sessionData: ISessionDataData = {
+        attendees: session.getAttendeeDataList()
+    };
+    socket.emit(PresenterEvents.EmitSessionData, sessionData);
+
+    session.attendees.forEach(attendee => {
+        attendee.socket.emit(
+            ClientEvents.EmitPresentationContent,
+            session.getSlideContent(attendee)
+        );
+    });
 }
 
 function handleGroupOperation(

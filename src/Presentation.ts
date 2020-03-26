@@ -3,6 +3,13 @@ import { IPresentation } from './models/presentation.model';
 import ContentSlide from './ContentSlide';
 import BaseSlide from './BaseSlide';
 import SlideCollection from './SlideCollection';
+import Attendee from './Attendee';
+import {
+    IPresentationStructure,
+    IPresentationStructureSlide,
+    IPresentationStructureCollectionSlide,
+    IPresentationStructureContentSlide
+} from './events/PresenterEvents';
 
 export default class Presentation {
     private name: string;
@@ -72,8 +79,6 @@ export default class Presentation {
     };
 
     private createSlideCollection = (slide: any) => {
-        // console.log(slide);
-
         return new SlideCollection(slide);
     };
 
@@ -86,5 +91,76 @@ export default class Presentation {
 
     slideCount = () => {
         return this.slides.length;
+    };
+
+    assignContent = (
+        attendee: Attendee,
+        slideIndex: number,
+        subIndex: number
+    ) => {
+        const slide = this.slide(slideIndex);
+        if (slide !== undefined) {
+            if (slide instanceof SlideCollection) {
+                slide.assignAttendee(attendee, subIndex);
+                return;
+            }
+        }
+        console.log('Slide is not a collection! ' + slideIndex);
+        return null;
+    };
+
+    getStructure = (): IPresentationStructure => {
+        const structure: IPresentationStructure = {
+            slides: []
+        };
+        this.slides.forEach(s => {
+            let slide: IPresentationStructureSlide;
+            if (s instanceof SlideCollection) {
+                const collection: IPresentationStructureCollectionSlide = {
+                    type: 'SlideCollection',
+                    slides: s.slides.map(sub =>
+                        this.getContentSlideForStructure(sub)
+                    )
+                };
+                slide = collection;
+            } else if (s instanceof ContentSlide) {
+                slide = this.getContentSlideForStructure(s);
+            } else {
+                console.log(
+                    'Error! Slide for structure is of unknown type! ' + typeof s
+                );
+                return;
+            }
+            structure.slides.push(slide);
+        });
+        return structure;
+    };
+
+    getAssignments(attendee: Attendee): { [slideIndex: number]: number } {
+        const assignments: { [slideIndex: number]: number } = {};
+        this.slides.forEach((slide, index) => {
+            if (slide.type !== 'SlideCollection') return;
+
+            const collection = slide as SlideCollection;
+            const subSlide = collection.assignments[attendee.name];
+
+            if (subSlide < 0) return;
+
+            assignments[index] = subSlide;
+        });
+
+        return assignments;
+    }
+
+    private getContentSlideForStructure = (
+        slide: ContentSlide
+    ): IPresentationStructureContentSlide => {
+        const content: IPresentationStructureContentSlide = {
+            type: slide.type,
+            title: slide.content.title,
+            body: slide.content.body
+        };
+
+        return content;
     };
 }

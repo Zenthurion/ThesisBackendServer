@@ -1,7 +1,6 @@
 import BaseSlide from './BaseSlide';
 
 export default class ContentSlide extends BaseSlide {
-    type: string;
     content: {
         title: string;
         body: string;

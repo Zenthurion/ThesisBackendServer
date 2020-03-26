@@ -64,6 +64,21 @@ export interface IValidateSessionIdData {
 }
 
 /**
+ * Interface for data related to PresenterEvents.EmitSessionIdValidated event
+ */
+export interface ISessionIdValidatedData {
+    /**
+     * Session ID being validated
+     */
+    sessionId: string;
+
+    /**
+     * Result of validation
+     */
+    isValid: boolean;
+}
+
+/**
  * Interface for data related to PresenterEvents.JoinSession event
  */
 export interface IJoinSessionData {
