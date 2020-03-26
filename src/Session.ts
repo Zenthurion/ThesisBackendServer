@@ -43,7 +43,6 @@ export default class Session {
 
     addAttendee = (attendee: Attendee) => {
         this.attendees.push(attendee);
-
         this.emitSessionData();
     };
 
@@ -61,6 +60,7 @@ export default class Session {
 
     removeAttendee = (attendee: Attendee) => {
         this.attendees = this.attendees.filter(att => att !== attendee);
+        this.emitSessionData();
     };
 
     goToSlide(slide: number) {
