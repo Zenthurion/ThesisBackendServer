@@ -67,6 +67,11 @@ export interface IInteractionData {
     submitted: boolean;
 
     /**
+     * Whethern the submitted data was valid
+     */
+    valid: boolean;
+
+    /**
      * The type of interaction, e.g. Text answer of Multiple Choice
      */
     type: string;
