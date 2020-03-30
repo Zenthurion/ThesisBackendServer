@@ -9,7 +9,7 @@ import AttendeeEvents, {
     IValidateSessionIdData,
     ISessionIdValidatedData
 } from './events/AttendeeEvents';
-import { IAssignContentData } from './events/ClientEvents';
+import { IAssignContentData, IInteractionData } from './events/ClientEvents';
 
 export function initialiseNewAttendee(server: ThesisServer, socket: Socket) {
     // 1. Listen for session id validation
@@ -72,7 +72,7 @@ function handleJoinSession(
 
     // 6. Handle interaction events
     socket.on(AttendeeEvents.Interaction, data =>
-        handleInteraction(server, socket, data)
+        handleInteraction(attendee, server, socket, session, data)
     );
 
     // 7. Handle self-assignment
@@ -94,6 +94,14 @@ function handleSelfAssignment(
     session.emitSessionData();
 }
 
-function handleInteraction(server: ThesisServer, socket: Socket, message: any) {
+function handleInteraction(
+    attendee: Attendee,
+    server: ThesisServer,
+    socket: Socket,
+    session: Session,
+    data: IInteractionData
+) {
     // 1. Handle interaction
+    session.presentation.registerInteraction(attendee, data);
+    session.emitSessionData();
 }

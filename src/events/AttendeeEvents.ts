@@ -92,21 +92,3 @@ export interface IJoinSessionData {
      */
     username: string;
 }
-
-/**
- * Interface for data related to PresenterEvents.Interaction event
- */
-export interface IInteractionData {
-    /**
-     * Reference to the element receiving the interaction.
-     *
-     * Type to be determined.
-     */
-    interactionElement: any;
-
-    /**
-     * The value associated with the interaction.
-     * Values depend on type of the interaction element
-     */
-    value: string;
-}

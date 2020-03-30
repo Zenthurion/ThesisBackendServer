@@ -53,7 +53,8 @@ export default class Session {
     getAttendeeData = (attendee: Attendee) => {
         const attendeeData: IAttendeeData = {
             name: attendee.name,
-            assignments: this.presentation.getAssignments(attendee)
+            assignments: this.presentation.getAssignments(attendee),
+            interactions: this.presentation.getInteractions(attendee)
         };
         return attendeeData;
     };

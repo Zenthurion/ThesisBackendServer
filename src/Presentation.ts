@@ -10,18 +10,19 @@ import {
     IPresentationStructureCollectionSlide,
     IPresentationStructureContentSlide
 } from './events/PresenterEvents';
+import { IInteractionData } from './events/ClientEvents';
 
 export default class Presentation {
     private name: string;
     private slides: BaseSlide[] = [];
 
-    static individualExerciseSlide: ContentSlide = {
+    static individualExerciseSlide = new ContentSlide({
         type: 'PlainSlide',
         content: {
             title: 'Individual Exercise',
             body: 'Look at your own screen for your exercise'
         }
-    };
+    });
 
     constructor(raw) {
         this.name = raw.hasOwnProperty('name') ? raw.name : 'unnamed';
@@ -109,6 +110,22 @@ export default class Presentation {
         return null;
     };
 
+    registerInteraction = (
+        attendee: Attendee,
+        interaction: IInteractionData
+    ) => {
+        const slide = this.slide(interaction.slideIndex);
+        if (slide.type === 'SlideCollection') {
+            const collection = slide as SlideCollection;
+            const subSlideIndex = collection.assignments[attendee.name] ?? 0;
+            const subSlide =
+                collection.slides[subSlideIndex < 0 ? 0 : subSlideIndex];
+            subSlide.registerInteraction(attendee, interaction);
+        } else {
+            (slide as ContentSlide).registerInteraction(attendee, interaction);
+        }
+    };
+
     getStructure = (): IPresentationStructure => {
         const structure: IPresentationStructure = {
             slides: []
@@ -150,6 +167,31 @@ export default class Presentation {
         });
 
         return assignments;
+    }
+
+    getInteractions(
+        attendee: Attendee
+    ): { [slideIndex: number]: IInteractionData } {
+        const interactions: { [slideIndex: number]: IInteractionData } = {};
+        this.slides.forEach((slide, index) => {
+            let interaction: IInteractionData;
+            if (slide.type === 'SlideCollection') {
+                const collection = slide as SlideCollection;
+                const subSlideIndex =
+                    collection.assignments[attendee.name] ?? 0;
+                interaction =
+                    collection.slides[subSlideIndex < 0 ? 0 : subSlideIndex]
+                        .interactions[attendee.name];
+            } else {
+                interaction = (slide as ContentSlide).interactions[
+                    attendee.name
+                ];
+            }
+            if (interaction === undefined) return;
+
+            interactions[index] = interaction;
+        });
+        return interactions;
     }
 
     private getContentSlideForStructure = (

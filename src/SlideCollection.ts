@@ -4,7 +4,7 @@ import Attendee from './Attendee';
 
 export default class SlideCollection extends BaseSlide {
     slides: ContentSlide[] = [];
-    assignments: { [attendeeId: string]: number } = {};
+    assignments: { [attendeeName: string]: number } = {};
 
     constructor(content: any) {
         super();

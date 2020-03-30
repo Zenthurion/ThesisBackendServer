@@ -1,4 +1,6 @@
 import BaseSlide from './BaseSlide';
+import { IInteractionData } from './events/ClientEvents';
+import Attendee from './Attendee';
 
 export default class ContentSlide extends BaseSlide {
     content: {
@@ -7,6 +9,7 @@ export default class ContentSlide extends BaseSlide {
         opotions?: string[];
         validation?: string[];
     };
+    interactions: { [attendeeName: string]: IInteractionData } = {};
 
     constructor(content: any) {
         super();
@@ -14,4 +17,11 @@ export default class ContentSlide extends BaseSlide {
         this.type = content.type;
         this.content = content.content;
     }
+
+    registerInteraction = (
+        attendee: Attendee,
+        interaction: IInteractionData
+    ) => {
+        this.interactions[attendee.name] = interaction;
+    };
 }

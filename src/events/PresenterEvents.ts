@@ -1,4 +1,4 @@
-import ClientEvents from './ClientEvents';
+import ClientEvents, { IInteractionData } from './ClientEvents';
 
 /**
  * Events relating to the presenter client
@@ -170,6 +170,11 @@ export interface IAttendeeData {
      * Data pair of slide index and sub index for collections
      */
     assignments: { [slideIndex: number]: number };
+
+    /**
+     * Data pair of slide index and the associated interaction of the attendee
+     */
+    interactions: { [slideIndex: number]: IInteractionData };
 }
 
 /**
