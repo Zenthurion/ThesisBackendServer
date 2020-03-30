@@ -51,3 +51,28 @@ export interface IPresentationContentData {
     currentSlide: any;
     index: number;
 }
+
+/**
+ * Interaction data representing an attendees interactions for a slide
+ */
+export interface IInteractionData {
+    /**
+     * Index of slide receiving the interaction
+     */
+    slideIndex: number;
+
+    /**
+     * Whether the data has been submitted or is still being worked on
+     */
+    submitted: boolean;
+
+    /**
+     * The type of interaction, e.g. Text answer of Multiple Choice
+     */
+    type: string;
+
+    /**
+     * The data of the interaction
+     */
+    data: string;
+}
