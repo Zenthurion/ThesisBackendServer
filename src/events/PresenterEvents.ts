@@ -126,7 +126,7 @@ export interface IPresentationStructureSlide {
 export interface IPresentationStructureContentSlide
     extends IPresentationStructureSlide {
     title: string;
-    body: string;
+    body: string[];
 }
 
 /**

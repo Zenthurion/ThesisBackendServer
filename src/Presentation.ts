@@ -8,7 +8,7 @@ import {
     IPresentationStructure,
     IPresentationStructureSlide,
     IPresentationStructureCollectionSlide,
-    IPresentationStructureContentSlide
+    IPresentationStructureContentSlide,
 } from './events/PresenterEvents';
 import { IInteractionData } from './events/ClientEvents';
 
@@ -20,8 +20,8 @@ export default class Presentation {
         type: 'PlainSlide',
         content: {
             title: 'Individual Exercise',
-            body: 'Look at your own screen for your exercise'
-        }
+            body: ['Look at your own screen for your exercise'],
+        },
     });
 
     constructor(raw) {
@@ -32,7 +32,7 @@ export default class Presentation {
             return;
         }
 
-        raw.slides.forEach(slide => {
+        raw.slides.forEach((slide) => {
             if (slide === undefined) {
                 console.log('A slide is undefined');
                 return;
@@ -128,16 +128,16 @@ export default class Presentation {
 
     getStructure = (): IPresentationStructure => {
         const structure: IPresentationStructure = {
-            slides: []
+            slides: [],
         };
-        this.slides.forEach(s => {
+        this.slides.forEach((s) => {
             let slide: IPresentationStructureSlide;
             if (s instanceof SlideCollection) {
                 const collection: IPresentationStructureCollectionSlide = {
                     type: 'SlideCollection',
-                    slides: s.slides.map(sub =>
+                    slides: s.slides.map((sub) =>
                         this.getContentSlideForStructure(sub)
-                    )
+                    ),
                 };
                 slide = collection;
             } else if (s instanceof ContentSlide) {
@@ -200,7 +200,7 @@ export default class Presentation {
         const content: IPresentationStructureContentSlide = {
             type: slide.type,
             title: slide.content.title,
-            body: slide.content.body
+            body: slide.content.body,
         };
 
         return content;

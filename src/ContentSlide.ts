@@ -5,7 +5,7 @@ import Attendee from './Attendee';
 export default class ContentSlide extends BaseSlide {
     content: {
         title: string;
-        body: string;
+        body: string[];
         opotions?: string[];
         validation?: string[];
     };
