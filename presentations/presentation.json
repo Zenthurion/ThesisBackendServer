@@ -1,23 +1,119 @@
 {
-    "name": "First Presentation",
+    "name": "Experiment Presentation",
     "slides": [
         {
             "type": "PlainSlide",
             "content": {
-                "title": "Introduction",
-                "body": "Welcome to the first slide! Here is some pirate ipsum free of charge: \nPlate Fleet Jolly Roger spirits Corsair. Davy Jones' Locker fire in the hole shrouds Barbary Coast."
+                "title": "1 - Introduction",
+                "body": [
+                    "Welcome to this brief recap of your early education. Consider this a spot test to see if you still remember the things you once knew."
+                ]
             }
+        },
+        {
+            "type": "PlainSlide",
+            "content": {
+                "title": "2 - First Topic",
+                "body": [
+                    "The first topic of the day is history. Here are a few significant historical events.",
+                    "1. The printing press was invented around 1440",
+                    "2. The American Revolution lasted from 1775 to 1783",
+                    "3. The Berlin Wall was torn down in 1989",
+                    "4. The (First) Industrial Revolution happened between 1760 to 1840"
+                ]
+            }
+        },
+        {
+            "type": "MultipleChoiceSlide",
+            "content": {
+                "title": "3 - Shared Warmup Question",
+                "body": ["What century was the printing press invented?"],
+                "options": ["1400", "1500", "1600", "1700"],
+                "validation": [0],
+                "controller": "attendee"
+            }
+        },
+        {
+            "type": "SlideCollection",
+            "collection": [
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "4a - Easy Question (MCQ)",
+                        "body": ["What decade did the Berlin Wall fall?"],
+                        "options": ["1950", "1970", "1980", "1990"],
+                        "validation": [2],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "TextAnswerSlide",
+                    "content": {
+                        "title": "4b - Hard Question (MCQ)",
+                        "body": [
+                            "What year did the American Revolution begin?"
+                        ],
+                        "validation": ["1775"],
+                        "controller": "attendee"
+                    }
+                }
+            ]
+        },
+        {
+            "type": "PlainSlide",
+            "content": {
+                "title": "5 - Second Topic",
+                "body": [
+                    "Our next topic is everyone’s favourite.",
+                    "Math.",
+                    "Choose the exercise you feel most comfortable here, but don’t underestimate yourself!"
+                ]
+            }
+        },
+        {
+            "type": "SlideCollection",
+            "collection": [
+                {
+                    "type": "TextAnswerSlide",
+                    "content": {
+                        "title": "6a - Easy Question (text)",
+                        "body": ["Answer the following", "2 + 3 * 3 = ?"],
+                        "validation": ["11"],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "TextAnswerSlide",
+                    "content": {
+                        "title": "6b - Medium Question (text)",
+                        "body": ["Answer the following", "53 + 111 * 4 = ?"],
+                        "validation": ["497"],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "TextAnswerSlide",
+                    "content": {
+                        "title": "6c - Hard Question (text)",
+                        "body": [
+                            "Answer the following",
+                            "What is the square root of (7 * 11 - 28)?"
+                        ],
+                        "validation": ["7"],
+                        "controller": "attendee"
+                    }
+                }
+            ]
         },
         {
             "type": "SlideChoiceSlide",
             "content": {
-                "title": "Choose your exercise",
-                "body": "Let's start off with some maths! \n\nWhich exercise would you like to do?",
-                "options": [
-                    "Exercise 1 (normal)",
-                    "Exercise 2 (hard)",
-                    "Exercise 3 (expert)"
+                "title": "7 - Second Topic Advancing",
+                "body": [
+                    "Do you remember your old best friend Algebra?",
+                    "Choose the exercise you’d like to challenge yourself with"
                 ],
+                "options": ["Exercise 1 (normal)", "Exercise 2 (hard)"],
                 "controller": "attendee"
             }
         },
@@ -27,27 +123,40 @@
                 {
                     "type": "TextAnswerSlide",
                     "content": {
-                        "title": "Addition",
-                        "body": "2 + 5 = ?",
-                        "validation": ["7", "seven"],
+                        "title": "8a - Medium Question (MCQ)",
+                        "body": ["Find x", "x - 2 = 5"],
+                        "validation": [
+                            "7",
+                            "x = 7",
+                            "x=7",
+                            "x =7",
+                            "x= 7",
+                            "seven",
+                            "Seven",
+                            "SEVEN",
+                            "7=x",
+                            "7 = x"
+                        ],
                         "controller": "attendee"
                     }
                 },
                 {
                     "type": "TextAnswerSlide",
                     "content": {
-                        "title": "Subtraction",
-                        "body": "2 - 5 = ?",
-                        "validation": ["-3", "minus three", "minus 3", "- 3"],
-                        "controller": "attendee"
-                    }
-                },
-                {
-                    "type": "TextAnswerSlide",
-                    "content": {
-                        "title": "Addition and Subtraction",
-                        "body": "2 + 7 - 4 = ?",
-                        "validation": ["5", "five"],
+                        "title": "8b - Hard Question (MCQ)",
+                        "body": ["Find x", "x / 3 = 5"],
+                        "validation": [
+                            "15",
+                            "x = 15",
+                            "x=15",
+                            "x =15",
+                            "x= 15",
+                            "fifteen",
+                            "Fifteen",
+                            "FIFTEEN",
+                            "15=x",
+                            "15 = x"
+                        ],
                         "controller": "attendee"
                     }
                 }
@@ -56,16 +165,75 @@
         {
             "type": "PlainSlide",
             "content": {
-                "title": "Good Job!",
-                "body": ""
+                "title": "9 - Third Topic",
+                "body": ["Now for a quick English quiz!"]
             }
+        },
+        {
+            "type": "MultipleChoiceSlide",
+            "content": {
+                "title": "10 - Shared Question (MCQ)",
+                "body": [
+                    "Restless, anxious, eager and yellow are all words of the following category"
+                ],
+                "options": ["Verb", "Consonant", "Adverb", "Adjective"],
+                "validation": [3],
+                "controller": "attendee"
+            }
+        },
+        {
+            "type": "SlideCollection",
+            "collection": [
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "11a - Easy Question (MCQ)",
+                        "body": ["Which of these is a consonant?"],
+                        "options": ["T", "Jump", "O", "Abstract"],
+                        "validation": [0],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "11b - Medium Question (MCQ)",
+                        "body": ["What is a synonym?"],
+                        "options": [
+                            "A word that is similar in meaning",
+                            "A word opposite in meaning to another",
+                            "A word that is negative",
+                            "None of these"
+                        ],
+                        "validation": [0],
+                        "controller": "attendee"
+                    }
+                },
+                {
+                    "type": "MultipleChoiceSlide",
+                    "content": {
+                        "title": "11c - Hard Question (MCQ)",
+                        "body": ["What is an antonym?"],
+                        "options": [
+                            "A word that is similar in meaning",
+                            "A word opposite in meaning to another",
+                            "A word that is negative",
+                            "None of these"
+                        ],
+                        "validation": [1],
+                        "controller": "attendee"
+                    }
+                }
+            ]
         },
         {
             "type": "SlideChoiceSlide",
             "content": {
-                "title": "Trivia Time!",
-                "body": "Choose the topic of your quiz",
-                "options": ["Geography", "History", "Technical"],
+                "title": "12 - The Important Questions",
+                "body": [
+                    "Now that we’re done with the silly questions it is time to answer some of the important ones in life. We will all be doing one of these topics first."
+                ],
+                "options": ["Philosophy", "Historic Figures"],
                 "controller": "presenter"
             }
         },
@@ -75,40 +243,22 @@
                 {
                     "type": "MultipleChoiceSlide",
                     "content": {
-                        "title": "Geography",
-                        "body": "Where is SDU Located?",
-                        "options": [
-                            "Odense",
-                            "Copenhagen",
-                            "Aarhus",
-                            "Aalborg"
-                        ],
-                        "validation": [0],
+                        "title": "13a - Philosophy",
+                        "body": ["What is the meaning of life?"],
+                        "options": ["To live", "To be", "42", "Nothing"],
+                        "validation": [0, 1, 2, 3],
                         "controller": "attendee"
                     }
                 },
                 {
                     "type": "MultipleChoiceSlide",
                     "content": {
-                        "title": "History",
-                        "body": "What year is it?",
-                        "options": ["2019", "2020", "2002", "1950"],
-                        "validation": [1],
-                        "controller": "attendee"
-                    }
-                },
-                {
-                    "type": "MultipleChoiceSlide",
-                    "content": {
-                        "title": "Technical",
-                        "body": "How do you save in Word?",
-                        "options": [
-                            "CTRL + S",
-                            "CTRL + SHIFT + S",
-                            "SHIFT + S",
-                            "CTRL + ALT + SHIFT + S"
+                        "title": "13b - Historic Figures",
+                        "body": [
+                            "What is the middle name of Homer J. Simpson?"
                         ],
-                        "validation": [0, 1],
+                        "options": ["John", "James", "Jay", "Theodore"],
+                        "validation": [2],
                         "controller": "attendee"
                     }
                 }
@@ -120,39 +270,43 @@
                 {
                     "type": "MultipleChoiceSlide",
                     "content": {
-                        "title": "Geography",
-                        "body": "What is the capitol of USA?",
-                        "options": [
-                            "New York",
-                            "Chicago",
-                            "Washington",
-                            "Los Angeles"
+                        "title": "14a - Animated Films ",
+                        "body": [
+                            "The actor who voiced Darth Vader also voiced another popular movie character. Which of these was it?"
                         ],
-                        "validation": [1],
+                        "options": [
+                            "Mufasa from The Lion King",
+                            "Prince Charming from Shrek",
+                            "Woody from Toy Story",
+                            "Hercules from Hercules"
+                        ],
+                        "validation": [0],
                         "controller": "attendee"
                     }
                 },
                 {
                     "type": "MultipleChoiceSlide",
                     "content": {
-                        "title": "History",
-                        "body": "What year did mankind first step on the moon?",
-                        "options": ["1959", "1969", "1949", "1979"],
-                        "validation": [1],
-                        "controller": "attendee"
-                    }
-                },
-                {
-                    "type": "MultipleChoiceSlide",
-                    "content": {
-                        "title": "Technical",
-                        "body": "How many bits are there in a byte?",
-                        "options": ["2", "8", "64", "1024"],
-                        "validation": [1],
+                        "title": "14b - Live Action Films ",
+                        "body": [
+                            "How many James Bond movies have been made, excluding No Time to Die which is set to release in 2020?"
+                        ],
+                        "options": ["12", "19", "25", "Too Many"],
+                        "validation": [2, 3],
                         "controller": "attendee"
                     }
                 }
             ]
+        },
+        {
+            "type": "PlainSlide",
+            "content": {
+                "title": "15 - Conclusion",
+                "body": [
+                    "That’s all!",
+                    "Thank you for attending this session, and please fill out the provided form."
+                ]
+            }
         }
     ]
 }
