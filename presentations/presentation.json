@@ -60,14 +60,16 @@
             ]
         },
         {
-            "type": "PlainSlide",
+            "type": "SlideChoiceSlide",
             "content": {
                 "title": "5 - Second Topic",
                 "body": [
                     "Our next topic is everyone’s favourite.",
                     "Math.",
                     "Choose the exercise you feel most comfortable here, but don’t underestimate yourself!"
-                ]
+                ],
+                "options": ["Easy", "Medium", "Hard"],
+                "controller": "attendee"
             }
         },
         {
